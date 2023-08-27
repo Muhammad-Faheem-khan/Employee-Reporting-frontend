@@ -1,0 +1,657 @@
+import Vue from "vue";
+import Vuex from "vuex";
+import { router, updateCurrentUser } from "./router";
+import { send } from "emailjs-com";
+
+Vue.use(Vuex);
+
+export const store = new Vuex.Store({
+  state: {
+    currentUser: {},
+    user: {},
+    allUsers: [],
+    announcements: [],
+    allTasks: [],
+    taskDetail: {},
+    userImg: null,
+    alertValue: false,
+    alertColor: "",
+    alertText: "",
+    apiLoading: "",
+  },
+  mutations: {
+    setApiLoading(state, data) {
+      state.apiLoading = data;
+    },
+    getCurrentUser(state, data) {
+      state.currentUser = data;
+    },
+
+    getUser(state, user) {
+      state.user = user;
+    },
+
+    getAllUsers(state, data) {
+      state.allUsers = data;
+    },
+
+    setAlertValue(state, data) {
+      state.alertValue = data;
+    },
+    setAlertColor(state, data) {
+      state.alertColor = data;
+    },
+    setAlertText(state, data) {
+      state.alertText = data;
+    },
+    getAllAnnouncements(state, data) {
+      console.log(data);
+      state.announcements = data;
+    },
+
+    getAllTasks(state, data) {
+      state.allTasks = data;
+    },
+    setUserImg(state, data) {
+      console.log("mutation", data);
+      state.userImg = data;
+    },
+    getTask(state, data) {
+      state.taskDetail = data;
+    },
+  },
+  actions: {
+    getCurrentUser(context) {
+      let userData = JSON.parse(localStorage.getItem("currentUser"));
+
+      updateCurrentUser(userData);
+      context.commit("getCurrentUser", userData);
+    },
+
+    getAllUsers(context) {
+      context.commit("setApiLoading", true);
+      fetch(`http://localhost:5000/api/users/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          context.commit("setApiLoading", false);
+          context.commit("getAllUsers", res);
+        });
+    },
+
+    // check user info from local storage as well as from Api response
+    loginValidation(context, data) {
+      fetch(`http://localhost:5000/api/users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.userID,
+          password: data.password,
+        }),
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (!res.message && res.user.isActive) {
+            sessionStorage.setItem("token", res.token);
+            localStorage.setItem("currentUser", JSON.stringify(res.user));
+            router.push("/home");
+          } else if (res?.user?.isActive) {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", "This email is blocked");
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    viewUserProfile(context, data) {
+      context.commit("setApiLoading", true);
+      fetch(`http://localhost:5000/api/users/${data}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          context.commit("setApiLoading", false);
+          context.commit("getUser", res);
+        });
+    },
+
+    createUser(context, data) {
+      fetch(`http://localhost:5000/api/users/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ ...data }),
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.message === "User registered successfully") {
+            context.dispatch("getAllUsers");
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            const toSend = {
+              name: res.newUser.name, // Replace with the recipient's name
+              email: res.newUser.email,
+              password: res.newUser.password,
+            };
+
+            send(
+              "service_j83j8ab", // Replace with your Email.js service ID
+              "template_y599l04", // Replace with your Email.js template ID
+              toSend,
+              "wkTYtQrtm_A1S5BZN", // Replace with your Email.js API key
+            )
+              .then((response) => {
+                console.log("SUCCESS!", response);
+                // Perform any additional actions here
+              })
+              .catch((error) => {
+                console.error("FAILED...", error);
+                // Handle the error here
+              });
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    deactivateUser(context, data) {
+      fetch(`http://localhost:5000/api/users/userStatus/${data.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ isActive: data.isActive }),
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.message === "User Status Changed") {
+            context.dispatch("getAllUsers");
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    deleteUser(context, id) {
+      fetch(`http://localhost:5000/api/users/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.message === "User deleted successfully.") {
+            context.dispatch("getAllUsers");
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    updateUser(context, data) {
+      console.log(data.id);
+      fetch(`http://localhost:5000/api/users/update/${data.id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: data.formData,
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.message === "User profile is updated") {
+            if (data.id === context.state.currentUser._id) {
+              localStorage.setItem("currentUser", JSON.stringify(res.user));
+            }
+            context.dispatch("getCurrentUser");
+            context.dispatch("viewUserProfile", data.id);
+            context.commit("setUserImg", null);
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    resetpassword(context, data) {
+      fetch(`http://localhost:5000/api/users/resetPassword/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.email,
+        }),
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          console.log(res.message);
+          if (res.message === "Email is reset.") {
+            console.log("hellposa");
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            const toSend = {
+              name: res.newUser.name, // Replace with the recipient's name
+              email: res.newUser.email,
+              password: res.newUser.password,
+            };
+            send(
+              "service_j83j8ab", // Replace with your Email.js service ID
+              "template_o8sydes", // Replace with your Email.js template ID
+              toSend,
+              "wkTYtQrtm_A1S5BZN", // Replace with your Email.js API key
+            )
+              .then((response) => {
+                console.log("SUCCESS!", response);
+                // Perform any additional actions here
+              })
+              .catch((error) => {
+                console.error("FAILED...", error);
+                // Handle the error here
+              });
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+              if (data.type !== "resend") {
+                router.push({
+                  name: "checkEmail",
+                  query: {
+                    email: JSON.stringify(data.email),
+                  },
+                });
+              }
+            }, 2000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    getAllAnnouncements(context, data) {
+      console.log(data);
+      context.commit("setApiLoading", true);
+      fetch(
+        `http://localhost:5000/api/announcement?limit=${data.limit}&offset=${data.offset}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        },
+      )
+        .then((response) => response.json())
+        .then((res) => {
+          context.commit("setApiLoading", false);
+          context.commit("getAllAnnouncements", res);
+        });
+    },
+
+    createAnnouncement(context, data) {
+      fetch(`http://localhost:5000/api/announcement/create`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: data,
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.message === "Announcement is added.") {
+            context.dispatch("getAllAnnouncements", {limit: 10, offset: 0});
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    deleteAnnouncement(context, id) {
+      fetch(`http://localhost:5000/api/announcement/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.message === "Announcement deleted successfully") {
+            context.dispatch("getAllAnnouncements", {limit: 10, offset:0});
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    updateAnnouncement(context, data) {
+      fetch(`http://localhost:5000/api/announcement/update/${data.id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: data.formData,
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.message === "Announcement is updated") {
+            context.dispatch("getAllAnnouncements", {limit:10, offset: 0});
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    getAllTasks(context, data) {
+      console.log(data);
+      context.commit("setApiLoading", true);
+      let url = "";
+      if (data?.user?.role === "Admin") {
+        if (data?.query === "filter") {
+          url = `http://localhost:5000/api/task?limit=${data.limit}&offset=${data.offset}&assignedBy=${data?.filterQuery?.assignedBy}&assignedToIds=${data?.filterQuery?.assignedToIds}&department=${data.filterQuery.department}&priority=${data.filterQuery.priority}&status=${data.filterQuery.status}`;
+        } else {
+          url = `http://localhost:5000/api/task?limit=${data.limit}&offset=${data.offset}`;
+        }
+      }else if (data?.query === "assignedBy") {
+        url = `http://localhost:5000/api/task?assignedBy=${data?.user._id}&limit=${data.limit}&offset=${data.offset}`;
+      }else if (data?.query === "assignedTo") {
+        url = `http://localhost:5000/api/task?assignedToIds=${data?.user?._id}&limit=${data.limit}&offset=${data.offset}`;
+      }
+
+      console.log(url);
+      fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        params: data.filterQuery ? data.filterQuery : "",
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          console.log(res);
+          context.commit("getAllTasks", res);
+          context.commit("setApiLoading", false);
+        });
+    },
+
+    createTask(context, data) {
+      fetch(`http://localhost:5000/api/task/create`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: data,
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.message === "New task is assigned") {
+            context.dispatch("getAllTasks", {
+              user: JSON.parse(localStorage.getItem("currentUser")),
+              query: "assignedBy",
+            });
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    viewTaskDetail(context, data) {
+      context.commit("setApiLoading", true);
+      console.log(data);
+      fetch(`http://localhost:5000/api/task/${data}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          context.commit("setApiLoading", false);
+          console.log(res);
+          context.commit("getTask", res);
+        });
+    },
+
+    changeStatus(context, data) {
+      fetch(`http://localhost:5000/api/task/status/${data.id}`, {
+        method: "PUT",
+        body: JSON.stringify({ status: data.status }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if(res){
+            context.dispatch("viewTaskDetail", data.id);
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", "Task status is updated.");
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }else{
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+          
+        });
+    },
+
+    deleteTask(context, data) {
+      fetch(`http://localhost:5000/api/task/delete/${data}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          console.log(res);
+          if (res.message === "Task deleted successfully.") {
+            context.dispatch("getAllTasks",{
+              user: JSON.parse(localStorage.getItem("currentUser")),
+              query: "assignedBy",
+            });
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 4000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+          
+        });
+    },
+
+    submitResponse(context, data) {
+      console.log("data in submit", data);
+      fetch(`http://localhost:5000/api/task/${data.id}/response`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: data.formData,
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          console.log(res);
+          if (res.message === "Response is submitted") {
+            context.dispatch("viewTaskDetail", data.id);
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+
+    deleteResponse(context, data) {
+      fetch(
+        `http://localhost:5000/api/task/${data.taskId}/delete/${data.resId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        },
+      )
+        .then((response) => response.json())
+        .then((res) => {
+          console.log(res);
+          if (res.message === "Response deleted successfully") {
+            context.dispatch("viewTaskDetail", data.taskId);
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "#013365");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 4000);
+          } else {
+            context.commit("setAlertValue", true);
+            context.commit("setAlertText", res.message);
+            context.commit("setAlertColor", "red");
+            setTimeout(() => {
+              context.commit("setAlertValue", false);
+            }, 3000);
+          }
+        });
+    },
+  },
+});
