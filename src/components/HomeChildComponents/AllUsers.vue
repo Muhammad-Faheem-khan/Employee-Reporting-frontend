@@ -57,7 +57,7 @@
                 >
                   <v-text-field
                     v-model="newUser.email"
-                    :rules="[rules.required, rules.email]"
+                    :rules="[rules.email]"
                     label="email"
                     color="indigo"
                     class="mr-4"
@@ -133,14 +133,7 @@
       </div>
     </div>
 
-    <div v-if="apiLoading" class="d-flex justify-center mt-15 pt-14">
-      <v-progress-circular
-        :size="50"
-        indeterminate
-        color="primary"
-      ></v-progress-circular>
-    </div>
-    <v-row v-else>
+    <v-row >
       <v-col cols="11" lg="11" class="d-flex flex-wrap justify-space-evenly">
         <v-card
           v-for="user in allUsers"
@@ -267,9 +260,6 @@ export default {
   },
 
   computed: {
-    apiLoading() {
-      return this.$store.state.apiLoading;
-    },
     allUsers() {
       return this.$store.state.allUsers;
     },
@@ -317,7 +307,6 @@ export default {
     },
 
     deactivateUser(id, isActive) {
-      console.log(isActive);
       this.$store.dispatch("deactivateUser", { id, isActive });
     },
     deleteuser(id) {

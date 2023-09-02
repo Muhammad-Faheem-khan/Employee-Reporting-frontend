@@ -72,7 +72,7 @@
                         >
                               <v-badge
                               color="red"
-                              content="6"
+                              :content="notifications.length > 0 ? notifications.length : '0'"
                             >
                             <v-icon color="#fff">
                               mdi-bell-outline
@@ -80,51 +80,61 @@
                             </v-badge>
                         </v-btn>
                     </template>
-                    <v-card>
+                    <v-card width="330px" style="overflow-x: scroll;">
                       <v-card-title class="py-2" style="background-color: #013365; color: #fff" >Unread Notifications</v-card-title>
-                      <v-list class="pt-0">
-                      <v-list-item>
-                        <v-list-item-title class="d-flex">
-                          <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-icon
-                              v-if="read"
-                              color="#013365"
-                              dark
-                              v-bind="attrs"
-                              v-on="on"
-                              >
-                              mdi-email-mark-as-unread
-                            </v-icon>
-                            <v-icon
-                            v-else
-                              color="#013365"
-                              dark
-                              v-bind="attrs"
-                              v-on="on"
-                              >
-                              mdi-email
-                            </v-icon>
-                          </template>
-                          <span>{{read ? 'Mark as read' : "Mark as unread"}}</span>
-                        </v-tooltip>
-                        <h3 class="mt-1 ml-2">New task is assigned by Ali Khan</h3>
-                          
-                          </v-list-item-title>
-                      </v-list-item>
-                      <v-divider></v-divider>
-                      <v-list-item>
-                        <v-list-item-title>
-                          New task is assigned by Ali Khan
-                          </v-list-item-title>
-                      </v-list-item>
-                      <v-divider></v-divider>
-                      <v-list-item>
-                        <v-list-item-title>
-                          New task is assigned by Ali Khan
-                          </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
+                      <v-list class="pt-0" v-if="notifications.length > 0">
+                        <div v-for="item in notifications" :key="item._id">
+                          <router-link v-if="item.task"  class="text-decoration-none" :to="{ name: 'taskDetails', params: { id: item.task} }">
+                            <v-list-item @click="markUnread(item._id)">
+                              <v-list-item-title class="d-flex" style="overflow-wrap: break-word; white-space: normal;">
+                                  <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-icon
+                                      color="#013365"
+                                      dark
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      >
+                                      mdi-email-mark-as-unread
+                                    </v-icon>
+                                  </template>
+                                  <span>Mark as read</span>
+                                </v-tooltip>
+                                <div class="word-wrap ml-2 mt-1 font-weight-bold">{{ item.content }}
+                                </div>
+                              </v-list-item-title>
+                            </v-list-item>
+                          </router-link>
+                          <router-link v-if="item.announcement"  class="text-decoration-none" to="/home/announcements">
+                            <v-list-item @click="markUnread(item._id)">
+                              <v-list-item-title class="d-flex"  style="overflow-wrap: break-word; white-space: normal;">
+                                  <v-tooltip bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-icon
+                                      color="#013365"
+                                      dark
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      >
+                                      mdi-email-mark-as-unread
+                                    </v-icon>
+                                  </template>
+                                  <span>Mark as read</span>
+                                </v-tooltip>
+                                <h3 class="mt-1 ml-2" >{{ item.content }}</h3>
+                              </v-list-item-title>
+                            </v-list-item>
+                          </router-link>
+                        <v-divider></v-divider>
+                      </div>
+                     
+                      </v-list>
+                      <v-list class="pt-0" v-else>
+                          <v-list-item class="d-flex flex-column justify-center align-center" style="height: 10rem;">
+                            <v-icon size="50" color="#013365" class="mt-5 mb-3">mdi-alert-circle-outline</v-icon>
+                            <h3 class="text-center vertical-center">No Unread Notifications</h3>
+                          </v-list-item>
+                      </v-list>
                     </v-card>
                     
                   </v-menu>
@@ -417,19 +427,20 @@
   </div>
 </template>
 <script>
-// import io from 'socket.io-client';
+import { io } from 'socket.io-client';
 export default {
   name: "ProfileDetail",
   created() {
-    // this.socket = io('http://localhost:5000'); // Replace with your actual backend URL
-    // this.socket.on('connect', () => {
-    //     console.log('Connected to Socket.IO server');
-    // });
-    // this.socket.on('newNotification', (notification) => {
-    //   this.notifications.push(notification);
-    // });
+    this.socket = io('http://localhost:5000', { transports : ['websocket'] }); // Replace with your actual backend URL
+    this.socket.on('connect', () => {
+        console.log('Connected to Socket.IO server');
+    });
+    this.socket.on('newNotification', () => {
+      this.$store.dispatch('getNotifications', this.userData._id)
+    });
   },
   beforeMount() {
+    this.$store.dispatch('getNotifications', this.userData._id)
     this.$store.dispatch("getAllUsers");
     this.$store.commit("getAllTasks", []);
     this.$store.dispatch("getAllTasks", {
@@ -476,6 +487,9 @@ export default {
   },
 
   computed: {
+    notifications(){
+      return this.$store.state.allNotifications
+    },
     totalPages() {
       return Math.ceil(this.allTasks.totalCount / this.limit);
     },
@@ -515,6 +529,9 @@ export default {
   },
 
   methods: {
+    markUnread(id){
+      this.$store.dispatch("markUnread", id)
+    },
     resetFilters() {
       this.$store.commit("getAllTasks", []);
       this.$store.dispatch("getAllTasks", {

@@ -351,9 +351,7 @@ export default {
     editAnnouncement(announcement) {
       this.announcementPopUp = true;
       this.isUpdating = true;
-      console.log("data", announcement);
       this.announcementData = { ...announcement };
-      console.log("this data", this.announcementData);
     },
     deleteAnnouncement(id) {
       this.$store.dispatch("deleteAnnouncement", id);

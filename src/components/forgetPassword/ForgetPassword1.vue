@@ -40,17 +40,18 @@
           class="mt-1"
           v-model="userEmail"
           label="Verify Email"
-          @keypress.enter="resetPassowrd()"
+          @keypress.enter="resetPassword()"
         >
         </v-text-field>
         <!--ResetPassword-Button-->
         <div class="d-flex justify-center mt-8">
           <v-btn
+          :disabled="apiLoading"
             class="forget-btn white--text"
             large
             rounded
             color="#013365"
-            @click="resetPassowrd()"
+            @click="resetPassword()"
             >Reset Password</v-btn
           >
         </div>
@@ -76,6 +77,9 @@ export default {
     };
   },
   computed: {
+    apiLoading() {
+      return this.$store.state.apiLoading;
+    },
     alertValue() {
       return this.$store.state.alertValue;
     },
@@ -87,7 +91,7 @@ export default {
     },
   },
   methods: {
-    resetPassowrd() {
+    resetPassword() {
       this.$store.dispatch("resetpassword", { email: this.userEmail });
     },
   },

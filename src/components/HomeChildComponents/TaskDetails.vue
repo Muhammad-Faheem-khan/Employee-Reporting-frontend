@@ -432,7 +432,6 @@ export default {
     handleUpload() {
       if (this.response.description) {
         const formData = new FormData();
-        console.log("filess", this.response.files);
         formData.append("description", this.response.description);
         formData.append("user", this.currentUser._id);
         this.response.files.forEach((file) => {

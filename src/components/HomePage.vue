@@ -7,9 +7,9 @@
         <!--Logo-Image-->
         <div class="d-flex">
           <v-img
-            src="../assets/logo.png"
-            width="40"
-            height="50"
+            src="../assets/logoWhite.png"
+            width="50"
+            height="60"
             contain
           ></v-img>
           <v-toolbar-title class="mt-2 ml-3"

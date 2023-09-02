@@ -95,7 +95,7 @@
                   <v-select
                     :rules="[rules.required]"
                     v-model="taskData.assignedToIds"
-                    :items="allUsers"
+                    :items="allUsers.filter(user => user.role !== 'Admin')"
                     item-text="name"
                     item-value="_id"
                     label="Assignees"
@@ -324,16 +324,18 @@
 <script>
 export default {
   name: "AssignTask",
+
   created() {
     this.$store.commit("getAllTasks", []);
+    this.$store.dispatch("getAllUsers");
     this.$store.dispatch("getAllTasks", {
       user: this.currentUser,
       query: "assignedBy",
       limit: this.limit,
       offset: this.offset,
     });
-    this.$store.dispatch("getAllUsers");
   },
+
   data() {
     return {
       limit: 10,
@@ -423,9 +425,11 @@ export default {
       this.taskData.assignedBy = "";
       this.taskData.department = "";
     },
+
     triggerFileInput() {
       this.$refs.fileUpload.click();
     },
+    
     handleImgLoad(event) {
       this.taskData.img = event.target.files[0];
     },

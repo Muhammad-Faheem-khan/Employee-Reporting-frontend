@@ -3,18 +3,6 @@
   <v-container class="mt-6">
     <!--Alert-->
     <div style="position: absolute; right: 1rem; width: 20rem">
-      <v-alert
-        :value="alertValue"
-        style="z-index: 100"
-        dismissible
-        :color="alertColor"
-        border="left"
-        elevation="2"
-        colored-border
-        icon="mdi-check-circle"
-      >
-        {{ alertText }}
-      </v-alert>
     </div>
     <!--Animated-Image-->
     <v-row class="text-center pt-10">
@@ -44,7 +32,7 @@
         <!--Resend-Button-->
         <div class="d-flex justify-center mt-4 flex-container">
           <p class="mt-1 mr-3">Didn't receive email?</p>
-          <v-btn text color="#013365" @click="resetPassowrd()">Resend</v-btn>
+          <v-btn text color="#013365" >Contact HR</v-btn>
         </div>
         <!--BacktoLogin-Button-->
         <div class="d-flex justify-center mt-4">
@@ -54,6 +42,7 @@
               large
               rounded
               color="secondary"
+              
             >
               <v-icon>mdi-arrow-left-thin</v-icon> Back to Log In
             </v-btn></router-link
@@ -72,37 +61,9 @@ export default {
     return {};
   },
 
-  beforeMount() {
-    if (!this.$route.query.email) {
-      this.$router.push("/");
-    }
-  },
-
-  computed: {
-    userEmail() {
-      return JSON.parse(this.$route.query.email || "{}");
-    },
-    alertValue() {
-      return this.$store.state.alertValue;
-    },
-    alertText() {
-      return this.$store.state.alertText;
-    },
-    alertColor() {
-      return this.$store.state.alertColor;
-    },
-  },
-
   methods: {
-    checkComponent() {
-      this.$router.push("/setPassword");
-    },
-    resetPassowrd() {
-      this.$store.dispatch("resetpassword", {
-        email: this.userEmail,
-        type: "resend",
-      });
-    },
+ 
+  
   },
 };
 </script>

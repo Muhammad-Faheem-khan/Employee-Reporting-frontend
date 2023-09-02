@@ -13,11 +13,12 @@ export const store = new Vuex.Store({
     announcements: [],
     allTasks: [],
     taskDetail: {},
+    allNotifications: [],
     userImg: null,
     alertValue: false,
     alertColor: "",
     alertText: "",
-    apiLoading: "",
+    apiLoading: false,
   },
   mutations: {
     setApiLoading(state, data) {
@@ -45,7 +46,6 @@ export const store = new Vuex.Store({
       state.alertText = data;
     },
     getAllAnnouncements(state, data) {
-      console.log(data);
       state.announcements = data;
     },
 
@@ -53,12 +53,14 @@ export const store = new Vuex.Store({
       state.allTasks = data;
     },
     setUserImg(state, data) {
-      console.log("mutation", data);
       state.userImg = data;
     },
     getTask(state, data) {
       state.taskDetail = data;
     },
+    getNotifications(state, data){
+      state.allNotifications = data
+    }
   },
   actions: {
     getCurrentUser(context) {
@@ -69,7 +71,6 @@ export const store = new Vuex.Store({
     },
 
     getAllUsers(context) {
-      context.commit("setApiLoading", true);
       fetch(`http://localhost:5000/api/users/`, {
         method: "GET",
         headers: {
@@ -79,7 +80,6 @@ export const store = new Vuex.Store({
       })
         .then((response) => response.json())
         .then((res) => {
-          context.commit("setApiLoading", false);
           context.commit("getAllUsers", res);
         });
     },
@@ -157,10 +157,10 @@ export const store = new Vuex.Store({
             };
 
             send(
-              "service_j83j8ab", // Replace with your Email.js service ID
-              "template_y599l04", // Replace with your Email.js template ID
+              "service_o0wu018", // Replace with your Email.js service ID
+              "template_n80jmqv", // Replace with your Email.js template ID
               toSend,
-              "wkTYtQrtm_A1S5BZN", // Replace with your Email.js API key
+              "jfe56FTlamrr-k5M4", // Replace with your Email.js API key
             )
               .then((response) => {
                 console.log("SUCCESS!", response);
@@ -244,7 +244,6 @@ export const store = new Vuex.Store({
     },
 
     updateUser(context, data) {
-      console.log(data.id);
       fetch(`http://localhost:5000/api/users/update/${data.id}`, {
         method: "PUT",
         headers: {
@@ -279,6 +278,7 @@ export const store = new Vuex.Store({
     },
 
     resetpassword(context, data) {
+      context.commit("setApiLoading", true);
       fetch(`http://localhost:5000/api/users/resetPassword/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -288,9 +288,8 @@ export const store = new Vuex.Store({
       })
         .then((response) => response.json())
         .then((res) => {
-          console.log(res.message);
+          context.commit("setApiLoading", false);
           if (res.message === "Email is reset.") {
-            console.log("hellposa");
             context.commit("setAlertValue", true);
             context.commit("setAlertText", res.message);
             context.commit("setAlertColor", "#013365");
@@ -300,10 +299,10 @@ export const store = new Vuex.Store({
               password: res.newUser.password,
             };
             send(
-              "service_j83j8ab", // Replace with your Email.js service ID
-              "template_o8sydes", // Replace with your Email.js template ID
+              "service_o0wu018", // Replace with your Email.js service ID
+              "template_xveklqg", // Replace with your Email.js template ID
               toSend,
-              "wkTYtQrtm_A1S5BZN", // Replace with your Email.js API key
+              "jfe56FTlamrr-k5M4", // Replace with your Email.js API key
             )
               .then((response) => {
                 console.log("SUCCESS!", response);
@@ -319,7 +318,7 @@ export const store = new Vuex.Store({
                 router.push({
                   name: "checkEmail",
                   query: {
-                    email: JSON.stringify(data.email),
+                    email: JSON.stringify([data.email]),
                   },
                 });
               }
@@ -336,7 +335,6 @@ export const store = new Vuex.Store({
     },
 
     getAllAnnouncements(context, data) {
-      console.log(data);
       context.commit("setApiLoading", true);
       fetch(
         `http://localhost:5000/api/announcement?limit=${data.limit}&offset=${data.offset}`,
@@ -443,7 +441,6 @@ export const store = new Vuex.Store({
     },
 
     getAllTasks(context, data) {
-      console.log(data);
       context.commit("setApiLoading", true);
       let url = "";
       if (data?.user?.role === "Admin") {
@@ -458,7 +455,6 @@ export const store = new Vuex.Store({
         url = `http://localhost:5000/api/task?assignedToIds=${data?.user?._id}&limit=${data.limit}&offset=${data.offset}`;
       }
 
-      console.log(url);
       fetch(url, {
         method: "GET",
         headers: {
@@ -469,7 +465,6 @@ export const store = new Vuex.Store({
       })
         .then((response) => response.json())
         .then((res) => {
-          console.log(res);
           context.commit("getAllTasks", res);
           context.commit("setApiLoading", false);
         });
@@ -489,6 +484,8 @@ export const store = new Vuex.Store({
             context.dispatch("getAllTasks", {
               user: JSON.parse(localStorage.getItem("currentUser")),
               query: "assignedBy",
+              limit: 10,
+              offset: 0
             });
             context.commit("setAlertValue", true);
             context.commit("setAlertText", res.message);
@@ -509,7 +506,6 @@ export const store = new Vuex.Store({
 
     viewTaskDetail(context, data) {
       context.commit("setApiLoading", true);
-      console.log(data);
       fetch(`http://localhost:5000/api/task/${data}`, {
         method: "GET",
         headers: {
@@ -520,7 +516,6 @@ export const store = new Vuex.Store({
         .then((response) => response.json())
         .then((res) => {
           context.commit("setApiLoading", false);
-          console.log(res);
           context.commit("getTask", res);
         });
     },
@@ -566,11 +561,12 @@ export const store = new Vuex.Store({
       })
         .then((response) => response.json())
         .then((res) => {
-          console.log(res);
           if (res.message === "Task deleted successfully.") {
             context.dispatch("getAllTasks",{
               user: JSON.parse(localStorage.getItem("currentUser")),
               query: "assignedBy",
+              limit: 10,
+              offset: 0
             });
             context.commit("setAlertValue", true);
             context.commit("setAlertText", res.message);
@@ -591,7 +587,6 @@ export const store = new Vuex.Store({
     },
 
     submitResponse(context, data) {
-      console.log("data in submit", data);
       fetch(`http://localhost:5000/api/task/${data.id}/response`, {
         method: "POST",
         headers: {
@@ -601,7 +596,6 @@ export const store = new Vuex.Store({
       })
         .then((response) => response.json())
         .then((res) => {
-          console.log(res);
           if (res.message === "Response is submitted") {
             context.dispatch("viewTaskDetail", data.id);
             context.commit("setAlertValue", true);
@@ -634,7 +628,6 @@ export const store = new Vuex.Store({
       )
         .then((response) => response.json())
         .then((res) => {
-          console.log(res);
           if (res.message === "Response deleted successfully") {
             context.dispatch("viewTaskDetail", data.taskId);
             context.commit("setAlertValue", true);
@@ -653,5 +646,30 @@ export const store = new Vuex.Store({
           }
         });
     },
+
+    getNotifications(context, userId){
+      fetch(`http://localhost:5000/api/notifications/${userId}/unread`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          context.commit('getNotifications', res)
+        });
+    },
+    markUnread(context, id){
+      fetch(`http://localhost:5000/api/notifications/${id}/read`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+        .then((response) => response.json())
+        .then(() => {
+          context.dispatch('getNotifications', context.state.currentUser)
+        });
+    }
   },
 });

@@ -502,13 +502,7 @@ export default {
         this.updateData.dob !== "" &&
         this.updateData.joiningDate !== ""
       ) {
-        console.log("hell");
         this.updateData.img = this.userImg;
-        console.log(
-          "this.updateData",
-          this.updateData.dob,
-          this.updateData.joiningDate,
-        );
         const formData = new FormData();
         formData.append("name", this.updateData.name);
         formData.append("address", this.updateData.address);
