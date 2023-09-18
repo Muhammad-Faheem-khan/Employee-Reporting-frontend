@@ -100,7 +100,7 @@
                                   </template>
                                   <span>Mark as read</span>
                                 </v-tooltip>
-                                <div class="word-wrap ml-2 mt-1 font-weight-bold">{{ item.content }}
+                                <div class="ml-2 mt-1 font-weight-bold">{{ item.content }}
                                 </div>
                               </v-list-item-title>
                             </v-list-item>
@@ -121,7 +121,7 @@
                                   </template>
                                   <span>Mark as read</span>
                                 </v-tooltip>
-                                <h3 class="mt-1 ml-2" >{{ item.content }}</h3>
+                                <div class="mt-1 ml-2 font-weight-bold">{{ item.content }}</div>
                               </v-list-item-title>
                             </v-list-item>
                           </router-link>
@@ -431,7 +431,7 @@ import { io } from 'socket.io-client';
 export default {
   name: "ProfileDetail",
   created() {
-    this.socket = io('http://localhost:5000', { transports : ['websocket'] }); // Replace with your actual backend URL
+    this.socket = io('http://srv418011.hstgr.cloud', { transports : ['websocket'] }); // Replace with your actual backend URL
     this.socket.on('connect', () => {
         console.log('Connected to Socket.IO server');
     });

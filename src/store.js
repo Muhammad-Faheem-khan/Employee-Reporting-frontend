@@ -71,7 +71,7 @@ export const store = new Vuex.Store({
     },
 
     getAllUsers(context) {
-      fetch(`http://localhost:5000/api/users/`, {
+      fetch(`http://srv418011.hstgr.cloud/api/users/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export const store = new Vuex.Store({
 
     // check user info from local storage as well as from Api response
     loginValidation(context, data) {
-      fetch(`http://localhost:5000/api/users/login`, {
+      fetch(`http://srv418011.hstgr.cloud/api/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -120,7 +120,7 @@ export const store = new Vuex.Store({
 
     viewUserProfile(context, data) {
       context.commit("setApiLoading", true);
-      fetch(`http://localhost:5000/api/users/${data}`, {
+      fetch(`http://srv418011.hstgr.cloud/api/users/${data}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -135,7 +135,7 @@ export const store = new Vuex.Store({
     },
 
     createUser(context, data) {
-      fetch(`http://localhost:5000/api/users/signup`, {
+      fetch(`http://srv418011.hstgr.cloud/api/users/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -185,7 +185,7 @@ export const store = new Vuex.Store({
     },
 
     deactivateUser(context, data) {
-      fetch(`http://localhost:5000/api/users/userStatus/${data.id}`, {
+      fetch(`http://srv418011.hstgr.cloud/api/users/userStatus/${data.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -215,7 +215,7 @@ export const store = new Vuex.Store({
     },
 
     deleteUser(context, id) {
-      fetch(`http://localhost:5000/api/users/delete/${id}`, {
+      fetch(`http://srv418011.hstgr.cloud/api/users/delete/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -244,7 +244,7 @@ export const store = new Vuex.Store({
     },
 
     updateUser(context, data) {
-      fetch(`http://localhost:5000/api/users/update/${data.id}`, {
+      fetch(`http://srv418011.hstgr.cloud/api/users/update/${data.id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -279,7 +279,7 @@ export const store = new Vuex.Store({
 
     resetpassword(context, data) {
       context.commit("setApiLoading", true);
-      fetch(`http://localhost:5000/api/users/resetPassword/`, {
+      fetch(`http://srv418011.hstgr.cloud/api/users/resetPassword/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -337,7 +337,7 @@ export const store = new Vuex.Store({
     getAllAnnouncements(context, data) {
       context.commit("setApiLoading", true);
       fetch(
-        `http://localhost:5000/api/announcement?limit=${data.limit}&offset=${data.offset}`,
+        `http://srv418011.hstgr.cloud/api/announcement?limit=${data.limit}&offset=${data.offset}`,
         {
           method: "GET",
           headers: {
@@ -354,7 +354,7 @@ export const store = new Vuex.Store({
     },
 
     createAnnouncement(context, data) {
-      fetch(`http://localhost:5000/api/announcement/create`, {
+      fetch(`http://srv418011.hstgr.cloud/api/announcement/create`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -383,7 +383,7 @@ export const store = new Vuex.Store({
     },
 
     deleteAnnouncement(context, id) {
-      fetch(`http://localhost:5000/api/announcement/delete/${id}`, {
+      fetch(`http://srv418011.hstgr.cloud/api/announcement/delete/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -412,7 +412,7 @@ export const store = new Vuex.Store({
     },
 
     updateAnnouncement(context, data) {
-      fetch(`http://localhost:5000/api/announcement/update/${data.id}`, {
+      fetch(`http://srv418011.hstgr.cloud/api/announcement/update/${data.id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -445,14 +445,14 @@ export const store = new Vuex.Store({
       let url = "";
       if (data?.user?.role === "Admin") {
         if (data?.query === "filter") {
-          url = `http://localhost:5000/api/task?limit=${data.limit}&offset=${data.offset}&assignedBy=${data?.filterQuery?.assignedBy}&assignedToIds=${data?.filterQuery?.assignedToIds}&department=${data.filterQuery.department}&priority=${data.filterQuery.priority}&status=${data.filterQuery.status}`;
+          url = `http://srv418011.hstgr.cloud/api/task?limit=${data.limit}&offset=${data.offset}&assignedBy=${data?.filterQuery?.assignedBy}&assignedToIds=${data?.filterQuery?.assignedToIds}&department=${data.filterQuery.department}&priority=${data.filterQuery.priority}&status=${data.filterQuery.status}`;
         } else {
-          url = `http://localhost:5000/api/task?limit=${data.limit}&offset=${data.offset}`;
+          url = `http://srv418011.hstgr.cloud/api/task?limit=${data.limit}&offset=${data.offset}`;
         }
       }else if (data?.query === "assignedBy") {
-        url = `http://localhost:5000/api/task?assignedBy=${data?.user._id}&limit=${data.limit}&offset=${data.offset}`;
+        url = `http://srv418011.hstgr.cloud/api/task?assignedBy=${data?.user._id}&limit=${data.limit}&offset=${data.offset}`;
       }else if (data?.query === "assignedTo") {
-        url = `http://localhost:5000/api/task?assignedToIds=${data?.user?._id}&limit=${data.limit}&offset=${data.offset}`;
+        url = `http://srv418011.hstgr.cloud/api/task?assignedToIds=${data?.user?._id}&limit=${data.limit}&offset=${data.offset}`;
       }
 
       fetch(url, {
@@ -471,7 +471,7 @@ export const store = new Vuex.Store({
     },
 
     createTask(context, data) {
-      fetch(`http://localhost:5000/api/task/create`, {
+      fetch(`http://srv418011.hstgr.cloud/api/task/create`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -506,7 +506,7 @@ export const store = new Vuex.Store({
 
     viewTaskDetail(context, data) {
       context.commit("setApiLoading", true);
-      fetch(`http://localhost:5000/api/task/${data}`, {
+      fetch(`http://srv418011.hstgr.cloud/api/task/${data}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -521,7 +521,7 @@ export const store = new Vuex.Store({
     },
 
     changeStatus(context, data) {
-      fetch(`http://localhost:5000/api/task/status/${data.id}`, {
+      fetch(`http://srv418011.hstgr.cloud/api/task/status/${data.id}`, {
         method: "PUT",
         body: JSON.stringify({ status: data.status }),
         headers: {
@@ -552,7 +552,7 @@ export const store = new Vuex.Store({
     },
 
     deleteTask(context, data) {
-      fetch(`http://localhost:5000/api/task/delete/${data}`, {
+      fetch(`http://srv418011.hstgr.cloud/api/task/delete/${data}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -587,7 +587,7 @@ export const store = new Vuex.Store({
     },
 
     submitResponse(context, data) {
-      fetch(`http://localhost:5000/api/task/${data.id}/response`, {
+      fetch(`http://srv418011.hstgr.cloud/api/task/${data.id}/response`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -617,7 +617,7 @@ export const store = new Vuex.Store({
 
     deleteResponse(context, data) {
       fetch(
-        `http://localhost:5000/api/task/${data.taskId}/delete/${data.resId}`,
+        `http://srv418011.hstgr.cloud/api/task/${data.taskId}/delete/${data.resId}`,
         {
           method: "DELETE",
           headers: {
@@ -648,7 +648,7 @@ export const store = new Vuex.Store({
     },
 
     getNotifications(context, userId){
-      fetch(`http://localhost:5000/api/notifications/${userId}/unread`, {
+      fetch(`http://srv418011.hstgr.cloud/api/notifications/${userId}/unread`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -660,7 +660,7 @@ export const store = new Vuex.Store({
         });
     },
     markUnread(context, id){
-      fetch(`http://localhost:5000/api/notifications/${id}/read`, {
+      fetch(`http://srv418011.hstgr.cloud/api/notifications/${id}/read`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
