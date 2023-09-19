@@ -73,6 +73,7 @@ export const store = new Vuex.Store({
     getAllUsers(context) {
       fetch(`http://srv418011.hstgr.cloud/api/users/`, {
         method: "GET",
+        mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -88,6 +89,7 @@ export const store = new Vuex.Store({
     loginValidation(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/users/login`, {
         method: "POST",
+        mode: 'cors',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: data.userID,
@@ -122,6 +124,7 @@ export const store = new Vuex.Store({
       context.commit("setApiLoading", true);
       fetch(`http://srv418011.hstgr.cloud/api/users/${data}`, {
         method: "GET",
+        mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -137,6 +140,7 @@ export const store = new Vuex.Store({
     createUser(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/users/signup`, {
         method: "POST",
+        mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -187,6 +191,7 @@ export const store = new Vuex.Store({
     deactivateUser(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/users/userStatus/${data.id}`, {
         method: "PUT",
+        mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -217,6 +222,7 @@ export const store = new Vuex.Store({
     deleteUser(context, id) {
       fetch(`http://srv418011.hstgr.cloud/api/users/delete/${id}`, {
         method: "DELETE",
+        mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -246,6 +252,7 @@ export const store = new Vuex.Store({
     updateUser(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/users/update/${data.id}`, {
         method: "PUT",
+        mode: 'cors',
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
@@ -281,6 +288,7 @@ export const store = new Vuex.Store({
       context.commit("setApiLoading", true);
       fetch(`http://srv418011.hstgr.cloud/api/users/resetPassword/`, {
         method: "POST",
+        mode: 'cors',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: data.email,
@@ -340,6 +348,7 @@ export const store = new Vuex.Store({
         `http://srv418011.hstgr.cloud/api/announcement?limit=${data.limit}&offset=${data.offset}`,
         {
           method: "GET",
+          mode: 'cors',
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -356,6 +365,7 @@ export const store = new Vuex.Store({
     createAnnouncement(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/announcement/create`, {
         method: "POST",
+        mode: 'cors',
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
@@ -385,6 +395,7 @@ export const store = new Vuex.Store({
     deleteAnnouncement(context, id) {
       fetch(`http://srv418011.hstgr.cloud/api/announcement/delete/${id}`, {
         method: "DELETE",
+        mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -414,6 +425,7 @@ export const store = new Vuex.Store({
     updateAnnouncement(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/announcement/update/${data.id}`, {
         method: "PUT",
+        mode: 'cors',
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
@@ -457,6 +469,7 @@ export const store = new Vuex.Store({
 
       fetch(url, {
         method: "GET",
+        mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -473,6 +486,7 @@ export const store = new Vuex.Store({
     createTask(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/task/create`, {
         method: "POST",
+        mode: 'cors',
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
@@ -508,6 +522,7 @@ export const store = new Vuex.Store({
       context.commit("setApiLoading", true);
       fetch(`http://srv418011.hstgr.cloud/api/task/${data}`, {
         method: "GET",
+        mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -523,6 +538,7 @@ export const store = new Vuex.Store({
     changeStatus(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/task/status/${data.id}`, {
         method: "PUT",
+        mode: 'cors',
         body: JSON.stringify({ status: data.status }),
         headers: {
           "Content-Type": "application/json",
@@ -554,6 +570,7 @@ export const store = new Vuex.Store({
     deleteTask(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/task/delete/${data}`, {
         method: "DELETE",
+        mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -589,6 +606,7 @@ export const store = new Vuex.Store({
     submitResponse(context, data) {
       fetch(`http://srv418011.hstgr.cloud/api/task/${data.id}/response`, {
         method: "POST",
+        mode: 'cors',
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
@@ -620,6 +638,7 @@ export const store = new Vuex.Store({
         `http://srv418011.hstgr.cloud/api/task/${data.taskId}/delete/${data.resId}`,
         {
           method: "DELETE",
+          mode: 'cors',
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -650,6 +669,7 @@ export const store = new Vuex.Store({
     getNotifications(context, userId){
       fetch(`http://srv418011.hstgr.cloud/api/notifications/${userId}/unread`, {
         method: "GET",
+        mode: 'cors',
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
@@ -662,6 +682,7 @@ export const store = new Vuex.Store({
     markUnread(context, id){
       fetch(`http://srv418011.hstgr.cloud/api/notifications/${id}/read`, {
         method: "PATCH",
+        mode: 'cors',
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
