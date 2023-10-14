@@ -114,7 +114,7 @@
         <!--Joining date-->
         <v-col md="8" m="9" class="d-flex justify-center py-0 pt-2">
           <p class="text-center mt-2">
-            {{ user.joiningDate ? getFormattedDate(user.joiningDate) : "" }}
+            {{ user.joiningDate  }}
           </p>
         </v-col>
       </v-row>
@@ -137,7 +137,7 @@
         <!--Date of Birth-->
         <v-col md="8" m="9" class="d-flex justify-center py-0 pt-2">
           <p class="text-center mt-2">
-            {{ user.dob ? getFormattedDate(user.dob) : "" }}
+            {{ user.dob  }}
           </p>
         </v-col>
       </v-row>
@@ -230,10 +230,7 @@ export default {
   },
 
   methods: {
-    getFormattedDate(timestamp) {
-      const dateObject = new Date(timestamp);
-      return dateObject.toDateString();
-    },
+    
   },
 };
 </script>

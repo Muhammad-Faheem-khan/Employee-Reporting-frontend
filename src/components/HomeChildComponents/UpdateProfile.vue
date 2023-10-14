@@ -440,8 +440,8 @@ export default {
         salary: "",
         designation: "",
         jobDescription: "",
-        joiningDate: "",
-        dob: "",
+        joiningDate: '',
+        dob: '',
         employeeCode: "",
         role: "",
       },
@@ -459,10 +459,10 @@ export default {
       return this.$store.state.userImg;
     },
     cnicFormatRule() {
-      return (v) => /^\d{5}-\d{7}-\d$/.test(v) || "Invalid CNIC format";
+      return (v) => /^\d{5}-\d{7}-\d$/.test(v) || "Invalid CNIC, Format: 3xxxx-xxxxxxx-x";
     },
     mobileFormatRule() {
-      return (v) => /^\d{4}-\d{7}/.test(v) || "Invalid number";
+      return (v) => /^\d{4}-\d{7}/.test(v) || "Invalid number, Format: 03xx-xxxxxxx";
     },
     currentUser() {
       return this.$store.state.currentUser;

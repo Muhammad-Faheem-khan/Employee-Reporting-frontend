@@ -80,7 +80,7 @@
                             </v-badge>
                         </v-btn>
                     </template>
-                    <v-card width="330px" style="overflow-x: scroll;">
+                    <v-card width="330px" height="500px" style="overflow: scroll;">
                       <v-card-title class="py-2" style="background-color: #013365; color: #fff" >Unread Notifications</v-card-title>
                       <v-list class="pt-0" v-if="notifications.length > 0">
                         <div v-for="item in notifications" :key="item._id">

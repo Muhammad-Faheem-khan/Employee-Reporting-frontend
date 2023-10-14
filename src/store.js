@@ -29,6 +29,12 @@ export const store = new Vuex.Store({
     },
 
     getUser(state, user) {
+      if(user.dob === 'null'){
+        user.dob = '2000-01-01'
+      }
+      if(user.joiningDate === 'null'){
+        user.joiningDate = '2000-01-01'
+      }
       state.user = user;
     },
 
