@@ -268,7 +268,7 @@
             </div>
             <div class="col-md-2">{{ item.status ? item.status : "-" }}</div>
             <div class="col-md-2">
-              {{ item.deadline ? getFormattedDate(item.deadline) : "-" }}
+              {{ item.deadline ? item.deadline : "-" }}
             </div>
             <div class="col-md-2">
               {{ item.priority ? item.priority : "-" }}
@@ -301,7 +301,7 @@
             </div>
             <div class="col-md-2 text-center">
               <b>Deadline: </b
-              >{{ item.deadline ? getFormattedDate(item.deadline) : "-" }}
+              >{{ item.deadline ? item.deadline : "-" }}
             </div>
             <div class="col-md-2 text-center">
               <b>Priority: </b>{{ item.priority ? item.priority : "-" }}
@@ -432,11 +432,6 @@ export default {
     
     handleImgLoad(event) {
       this.taskData.img = event.target.files[0];
-    },
-
-    getFormattedDate(timestamp) {
-      const dateObject = new Date(timestamp);
-      return dateObject.toDateString();
     },
 
     handleCreateTask() {

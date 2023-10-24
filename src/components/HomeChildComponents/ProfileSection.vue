@@ -87,7 +87,7 @@
           <h4 class="mt-4 text-center">Employee Reporting To</h4>
         </v-col>
         <v-col md="8" m="9" class="d-flex justify-center py-0 pt-2">
-          <p class="text-center mt-2">{{ user.jobDescription }}</p>
+          <p class="text-center mt-2">{{ user.employeeReportingTo?.name }}</p>
         </v-col>
       </v-row>
       <v-row class="flex-container">
@@ -95,7 +95,7 @@
           <h4 class="mt-4 text-center">Employee Status</h4>
         </v-col>
         <v-col md="8" m="9" class="d-flex justify-center py-0 pt-2">
-          <p class="text-center mt-2">{{ user.jobDescription }}</p>
+          <p class="text-center mt-2">{{ user.employeeStatus }}</p>
         </v-col>
       </v-row>
       <v-row class="flex-container">
@@ -103,7 +103,7 @@
           <h4 class="mt-4 text-center">Salary</h4>
         </v-col>
         <v-col md="8" m="9" class="d-flex justify-center py-0 pt-2">
-          <p class="text-center mt-2">{{ user.jobDescription }}</p>
+          <p class="text-center mt-2">{{ user.salary }}</p>
         </v-col>
       </v-row>
       <!--Joining date-->

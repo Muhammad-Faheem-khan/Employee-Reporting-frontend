@@ -93,6 +93,7 @@ export const store = new Vuex.Store({
 
     // check user info from local storage as well as from Api response
     loginValidation(context, data) {
+      context.commit("setApiLoading", true);
       fetch(`http://srv418011.hstgr.cloud/api/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -103,11 +104,12 @@ export const store = new Vuex.Store({
       })
         .then((response) => response.json())
         .then((res) => {
+          context.commit("setApiLoading", false);
           if (!res.message && res.user.isActive) {
             sessionStorage.setItem("token", res.token);
             localStorage.setItem("currentUser", JSON.stringify(res.user));
             router.push("/home");
-          } else if (res?.user?.isActive) {
+          } else if (res?.user && !res?.user?.isActive) {
             context.commit("setAlertValue", true);
             context.commit("setAlertText", "This email is blocked");
             context.commit("setAlertColor", "red");
@@ -123,6 +125,9 @@ export const store = new Vuex.Store({
             }, 3000);
           }
         });
+        setTimeout(() => {
+          context.commit("setApiLoading", false);
+        }, 10000);
     },
 
     viewUserProfile(context, data) {

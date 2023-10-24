@@ -180,7 +180,7 @@
             </v-col>
             <v-col md="8" sm="9" class="d-flex justify-center py-0 pt-2">
               <p class="text-center mt-2">
-                {{ getFormattedDate(taskDetail.createdAt) }}
+                {{ taskDetail.createdAt.slice(0,10) }}
               </p>
             </v-col>
           </v-row>
@@ -190,7 +190,7 @@
             </v-col>
             <v-col md="8" sm="9" class="d-flex justify-center py-0 pt-2">
               <p class="text-center mt-2">
-                {{ getFormattedDate(taskDetail.deadline) }}
+                {{ taskDetail.deadline }}
               </p>
             </v-col>
           </v-row>
@@ -408,10 +408,7 @@ export default {
   },
 
   methods: {
-    getFormattedDate(timestamp) {
-      const dateObject = new Date(timestamp);
-      return dateObject.toDateString();
-    },
+    
     deleteResponse(resId) {
       this.$store.dispatch("deleteResponse", {
         taskId: this.$route.params.id,

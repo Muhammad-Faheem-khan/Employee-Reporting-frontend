@@ -71,6 +71,7 @@
               large
               class="sign_btn white--text"
               @click="validate"
+              :loading="apiLoading"
             >
               Login
             </v-btn>
@@ -117,6 +118,9 @@ export default {
     },
   },
   computed: {
+    apiLoading() {
+      return this.$store.state.apiLoading;
+    },
     alertValue() {
       return this.$store.state.alertValue;
     },

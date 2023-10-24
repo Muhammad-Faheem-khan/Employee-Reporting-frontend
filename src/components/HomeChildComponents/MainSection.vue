@@ -164,7 +164,7 @@
                       <b>Joining Date</b>
                     </p>
                     <p v-if="userData?.joiningDate" class="mb-1 text-para">
-                      {{ getFormattedDate(userData.joiningDate) }}
+                      {{ userData.joiningDate }}
                     </p>
                   </div>
                 </div>
@@ -190,7 +190,7 @@
                       <b>Date of Birth</b>
                     </p>
                     <p v-if="userData?.dob" class="mb-1 text-para">
-                      {{ getFormattedDate(userData.dob) }}
+                      {{ userData.dob }}
                     </p>
                   </div>
                 </div>
@@ -367,7 +367,7 @@
                     </div>
                     <div class="col-md-2">
                       {{
-                        item.deadline ? getFormattedDate(item.deadline) : "-"
+                        item.deadline ? item.deadline : "-"
                       }}
                     </div>
                     <div class="col-md-2">
@@ -402,7 +402,7 @@
                     <div class="col-md-2 text-center">
                       <b>Deadline: </b
                       >{{
-                        item.deadline ? getFormattedDate(item.deadline) : "-"
+                        item.deadline ? item.deadline : "-"
                       }}
                     </div>
                     <div class="col-md-2 text-center">
@@ -567,10 +567,6 @@ export default {
       this.filterQuery.status = "";
     },
 
-    getFormattedDate(timestamp) {
-      const dateObject = new Date(timestamp);
-      return dateObject.toDateString();
-    },
   },
 };
 </script>
