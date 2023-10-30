@@ -499,6 +499,7 @@ export default {
         this.updateData.employeeCode !== "" &&
         this.updateData.role &&
         this.updateData.employeeReportingTo &&
+        this.updateData.employeeReportingTo !== "null" &&
         this.updateData.dob !== "" &&
         this.updateData.joiningDate !== ""
       ) {
@@ -511,6 +512,9 @@ export default {
         formData.append("dob", this.updateData.dob);
         formData.append("email", this.updateData.email);
         formData.append("employeeCode", this.updateData.employeeCode);
+        if(this.updateData.employeeReportingTo._id){
+          this.updateData.employeeReportingTo= this.updateData.employeeReportingTo._id
+        }
         formData.append(
           "employeeReportingTo",
           this.updateData.employeeReportingTo,

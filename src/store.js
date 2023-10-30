@@ -271,7 +271,6 @@ export const store = new Vuex.Store({
             }
             context.dispatch("getCurrentUser");
             context.dispatch("viewUserProfile", data.id);
-            context.commit("setUserImg", null);
             context.commit("setAlertValue", true);
             context.commit("setAlertText", res.message);
             context.commit("setAlertColor", "#013365");
@@ -286,6 +285,7 @@ export const store = new Vuex.Store({
               context.commit("setAlertValue", false);
             }, 3000);
           }
+          context.commit("setUserImg", null);
         });
     },
 

@@ -211,6 +211,8 @@ export default {
   name: "ProfileSection",
 
   created() {
+    this.$store.commit('setUserImg',null)
+    this.$store.state.user = {}
     const userId = this.$route.params.id;
     this.$store.dispatch("viewUserProfile", userId);
   },
