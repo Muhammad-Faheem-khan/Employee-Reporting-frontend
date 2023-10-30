@@ -455,7 +455,7 @@ export const store = new Vuex.Store({
     getAllTasks(context, data) {
       context.commit("setApiLoading", true);
       let url = "";
-      if (data?.user?.role === "Admin") {
+      if (data?.user?.role === "Admin" && data?.query !== "assignedBy") {
         if (data?.query === "filter") {
           url = `http://srv418011.hstgr.cloud/api/task?limit=${data.limit}&offset=${data.offset}&assignedBy=${data?.filterQuery?.assignedBy}&assignedToIds=${data?.filterQuery?.assignedToIds}&department=${data.filterQuery.department}&priority=${data.filterQuery.priority}&status=${data.filterQuery.status}`;
         } else {

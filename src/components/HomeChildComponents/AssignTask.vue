@@ -95,7 +95,7 @@
                   <v-select
                     :rules="[rules.required]"
                     v-model="taskData.assignedToIds"
-                    :items="allUsers.filter(user => user.role !== 'Admin')"
+                    :items="allUsers.filter(user => user.role !== 'Admin' && (user.employeeReportingTo === currentUser._id || user.role === 'Manager'))"
                     item-text="name"
                     item-value="_id"
                     label="Assignees"
